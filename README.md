@@ -111,7 +111,7 @@ This comprehensive inventory management system enables real-time tracking and an
 #### 6️⃣ **ProductDeliveries** - Supplier delivery tracking
 - Tracks product deliveries from suppliers to stores
 - **OrderDate** and **DeliveryDate** for lead time analysis
-- Delivery status (Pending, In Transit, Delivered, Cancelled)
+- Delivery status (Pending, Delivered, Partial, Cancelled)
 - Cost tracking per delivery
 - **Sample Data:** 50+ delivery records with realistic lead times (3-7 days)
 - **Key Fields:** DeliveryID, SupplierID, ProductID, StoreID, QuantityDelivered, UnitCost, TotalCost, OrderDate, DeliveryDate, DeliveryStatus
