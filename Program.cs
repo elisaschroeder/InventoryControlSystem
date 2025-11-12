@@ -99,9 +99,9 @@ class Program
     static async Task ShowStoresReport()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
-        Console.WriteLine("                    STORES REPORT");
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+        Console.WriteLine("                                                            STORES REPORT");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
         Console.ResetColor();
         Console.WriteLine();
 
@@ -120,17 +120,32 @@ class Program
             GROUP BY s.StoreID, s.StoreName, s.City, s.State, s.Phone, s.ManagerName
             ORDER BY s.StoreName";
 
+        // Print table header
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"{"ID",-5} | {"Store Name",-25} | {"City",-18} | {"State",-6} | {"Phone",-15} | {"Manager",-20} | {"Products",8} | {"Inventory",10}");
+        Console.WriteLine(new string('─', 140));
+        Console.ResetColor();
+
         await ExecuteQuery(query, reader =>
         {
-            Console.WriteLine($"Store ID: {reader["StoreID"]}");
-            Console.WriteLine($"Name: {reader["StoreName"]}");
-            Console.WriteLine($"Location: {reader["City"]}, {reader["State"]}");
-            Console.WriteLine($"Phone: {reader["Phone"]}");
-            Console.WriteLine($"Manager: {reader["ManagerName"]}");
-            Console.WriteLine($"Unique Products: {reader["ProductCount"]}");
-            Console.WriteLine($"Total Inventory Units: {reader["TotalInventory"]}");
-            Console.WriteLine(new string('─', 60));
+            string storeId = reader["StoreID"].ToString()!;
+            string storeName = reader["StoreName"].ToString()!;
+            string city = reader["City"].ToString()!;
+            string state = reader["State"].ToString()!;
+            string phone = reader["Phone"].ToString()!;
+            string manager = reader["ManagerName"].ToString()!;
+            string productCount = reader["ProductCount"].ToString()!;
+            string totalInventory = reader["TotalInventory"].ToString()!;
+
+            // Truncate long values to fit in columns
+            if (storeName.Length > 25) storeName = storeName.Substring(0, 22) + "...";
+            if (city.Length > 18) city = city.Substring(0, 15) + "...";
+            if (manager.Length > 20) manager = manager.Substring(0, 17) + "...";
+
+            Console.WriteLine($"{storeId,-5} | {storeName,-25} | {city,-18} | {state,-6} | {phone,-15} | {manager,-20} | {productCount,8} | {totalInventory,10}");
         });
+        
+        Console.WriteLine(new string('═', 140));
     }
 
     // ============================================
@@ -175,9 +190,9 @@ class Program
     static async Task ShowSuppliersReport()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
-        Console.WriteLine("                  SUPPLIERS REPORT");
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+        Console.WriteLine("                                                                SUPPLIERS REPORT");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
         Console.ResetColor();
         Console.WriteLine();
 
@@ -195,20 +210,43 @@ class Program
             FROM Suppliers s
             LEFT JOIN Products p ON s.SupplierID = p.SupplierID
             GROUP BY s.SupplierID, s.SupplierName, s.ContactName, s.Email, s.Phone, s.City, s.Country, s.Rating
-            ORDER BY s.Rating DESC, s.SupplierName";
+            ORDER BY s.SupplierName";
+
+        // Print table header
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"{"ID",-5} | {"Supplier Name",-25} | {"Contact Person",-22} | {"Email",-30} | {"Phone",-15} | {"City",-18} | {"Country",-15} | {"Rating",6} | {"Products",8}");
+        Console.WriteLine(new string('─', 165));
+        Console.ResetColor();
 
         await ExecuteQuery(query, reader =>
         {
-            Console.WriteLine($"Supplier ID: {reader["SupplierID"]}");
-            Console.WriteLine($"Name: {reader["SupplierName"]}");
-            Console.WriteLine($"Contact: {reader["ContactName"]}");
-            Console.WriteLine($"Email: {reader["Email"]}");
-            Console.WriteLine($"Phone: {reader["Phone"]}");
-            Console.WriteLine($"Location: {reader["City"]}, {reader["Country"]}");
-            Console.WriteLine($"Rating: {reader["Rating"]}/5.00");
-            Console.WriteLine($"Products Supplied: {reader["ProductCount"]}");
-            Console.WriteLine(new string('─', 60));
+            string supplierId = reader["SupplierID"].ToString()!;
+            string supplierName = reader["SupplierName"].ToString()!;
+            string contactName = reader["ContactName"].ToString()!;
+            string email = reader["Email"].ToString()!;
+            string phone = reader["Phone"].ToString()!;
+            string city = reader["City"].ToString()!;
+            string country = reader["Country"].ToString()!;
+            string rating = reader["Rating"].ToString()!;
+            string productCount = reader["ProductCount"].ToString()!;
+
+            // Truncate long values to fit in columns
+            if (supplierName.Length > 25) supplierName = supplierName.Substring(0, 22) + "...";
+            if (contactName.Length > 22) contactName = contactName.Substring(0, 19) + "...";
+            if (email.Length > 30) email = email.Substring(0, 27) + "...";
+            if (city.Length > 18) city = city.Substring(0, 15) + "...";
+            if (country.Length > 15) country = country.Substring(0, 12) + "...";
+
+            // Format rating to 2 decimal places
+            if (decimal.TryParse(rating, out decimal ratingValue))
+            {
+                rating = ratingValue.ToString("0.00");
+            }
+
+            Console.WriteLine($"{supplierId,-5} | {supplierName,-25} | {contactName,-22} | {email,-30} | {phone,-15} | {city,-18} | {country,-15} | {rating,6} | {productCount,8}");
         });
+        
+        Console.WriteLine(new string('═', 165));
     }
 
     // ============================================
@@ -217,9 +255,9 @@ class Program
     static async Task ShowProductsReport()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
-        Console.WriteLine("                  PRODUCTS REPORT");
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+        Console.WriteLine("                                                                   PRODUCTS REPORT");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
         Console.ResetColor();
         Console.WriteLine();
 
@@ -255,7 +293,7 @@ class Program
                         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
                         INNER JOIN Suppliers s ON p.SupplierID = s.SupplierID
                         LEFT JOIN Inventory i ON p.ProductID = i.ProductID AND i.StoreID = @StoreID
-                        ORDER BY p.ProductName";
+                        ORDER BY c.CategoryName, p.ProductName";
                     parameter = new MySqlParameter("@StoreID", storeId);
                 }
                 break;
@@ -282,7 +320,7 @@ class Program
                         LEFT JOIN Inventory i ON p.ProductID = i.ProductID
                         WHERE p.CategoryID = @CategoryID
                         GROUP BY p.ProductID, p.ProductName, p.SKU, p.UnitPrice, c.CategoryName, s.SupplierName, p.IsActive
-                        ORDER BY p.ProductName";
+                        ORDER BY c.CategoryName, p.ProductName";
                     parameter = new MySqlParameter("@CategoryID", categoryId);
                 }
                 break;
@@ -304,7 +342,7 @@ class Program
                     INNER JOIN Suppliers s ON p.SupplierID = s.SupplierID
                     LEFT JOIN Inventory i ON p.ProductID = i.ProductID
                     GROUP BY p.ProductID, p.ProductName, p.SKU, p.UnitPrice, c.CategoryName, s.SupplierName, p.IsActive
-                    ORDER BY p.ProductName";
+                    ORDER BY c.CategoryName, p.ProductName";
                 break;
         }
 
@@ -316,28 +354,44 @@ class Program
             Console.ResetColor();
             Console.WriteLine();
 
+            // Print table header
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{"ID",-5} | {"Product Name",-35} | {"SKU",-15} | {"Price",10} | {"Category",-18} | {"Supplier",-25} | {"Available",9} | {"Status",-8}");
+            Console.WriteLine(new string('─', 170));
+            Console.ResetColor();
+
             await ExecuteQuery(query, reader =>
             {
-                Console.WriteLine($"Product ID: {reader["ProductID"]}");
-                Console.WriteLine($"Name: {reader["ProductName"]}");
-                Console.WriteLine($"SKU: {reader["SKU"]}");
-                Console.WriteLine($"Price: ${reader["UnitPrice"]:F2}");
-                Console.WriteLine($"Category: {reader["CategoryName"]}");
-                Console.WriteLine($"Supplier: {reader["SupplierName"]}");
+                string productId = reader["ProductID"].ToString()!;
+                string productName = reader["ProductName"].ToString()!;
+                string sku = reader["SKU"].ToString()!;
+                decimal unitPrice = Convert.ToDecimal(reader["UnitPrice"]);
+                string category = reader["CategoryName"].ToString()!;
+                string supplier = reader["SupplierName"].ToString()!;
+                string available;
                 
                 if (filterChoice == "2")
                 {
                     var qty = reader["QuantityAvailable"];
-                    Console.WriteLine($"Available at Store: {(qty == DBNull.Value ? 0 : qty)}");
+                    available = (qty == DBNull.Value ? "0" : qty.ToString()!);
                 }
                 else
                 {
-                    Console.WriteLine($"Total Available: {reader["TotalAvailable"]}");
+                    available = reader["TotalAvailable"].ToString()!;
                 }
                 
-                Console.WriteLine($"Status: {(Convert.ToBoolean(reader["IsActive"]) ? "Active" : "Inactive")}");
-                Console.WriteLine(new string('─', 60));
+                string status = Convert.ToBoolean(reader["IsActive"]) ? "Active" : "Inactive";
+
+                // Truncate long values to fit in columns
+                if (productName.Length > 35) productName = productName.Substring(0, 32) + "...";
+                if (sku.Length > 15) sku = sku.Substring(0, 12) + "...";
+                if (category.Length > 18) category = category.Substring(0, 15) + "...";
+                if (supplier.Length > 25) supplier = supplier.Substring(0, 22) + "...";
+
+                Console.WriteLine($"{productId,-5} | {productName,-35} | {sku,-15} | ${unitPrice,9:F2} | {category,-18} | {supplier,-25} | {available,9} | {status,-8}");
             }, parameter != null ? new[] { parameter } : null);
+            
+            Console.WriteLine(new string('═', 170));
         }
     }
 
@@ -347,9 +401,9 @@ class Program
     static async Task ShowInventoryReport()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
-        Console.WriteLine("                  INVENTORY REPORT");
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+        Console.WriteLine("                                                                          INVENTORY REPORT");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
         Console.ResetColor();
         Console.WriteLine();
 
@@ -379,20 +433,21 @@ class Program
                             p.ProductName,
                             p.SKU,
                             c.CategoryName,
-                            i.QuantityOnHand,
-                            i.QuantityReserved,
-                            i.QuantityAvailable,
-                            i.MinimumStock,
+                            COALESCE(i.QuantityOnHand, 0) AS QuantityOnHand,
+                            COALESCE(i.QuantityReserved, 0) AS QuantityReserved,
+                            COALESCE(i.QuantityAvailable, 0) AS QuantityAvailable,
+                            COALESCE(i.MinimumStock, 0) AS MinimumStock,
                             CASE 
+                                WHEN i.InventoryID IS NULL THEN 'Not Stocked'
                                 WHEN i.QuantityAvailable <= 0 THEN 'Out of Stock'
                                 WHEN i.QuantityAvailable <= i.MinimumStock THEN 'Low Stock'
                                 ELSE 'In Stock'
                             END AS StockStatus
-                        FROM Inventory i
-                        INNER JOIN Products p ON i.ProductID = p.ProductID
-                        INNER JOIN Stores st ON i.StoreID = st.StoreID
+                        FROM Stores st
+                        CROSS JOIN Products p
                         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
-                        WHERE i.StoreID = @StoreID
+                        LEFT JOIN Inventory i ON i.StoreID = st.StoreID AND i.ProductID = p.ProductID
+                        WHERE st.StoreID = @StoreID
                         ORDER BY c.CategoryName, p.ProductName";
                     parameter = new MySqlParameter("@StoreID", storeId);
                 }
@@ -411,21 +466,22 @@ class Program
                             p.ProductName,
                             p.SKU,
                             c.CategoryName,
-                            i.QuantityOnHand,
-                            i.QuantityReserved,
-                            i.QuantityAvailable,
-                            i.MinimumStock,
+                            COALESCE(i.QuantityOnHand, 0) AS QuantityOnHand,
+                            COALESCE(i.QuantityReserved, 0) AS QuantityReserved,
+                            COALESCE(i.QuantityAvailable, 0) AS QuantityAvailable,
+                            COALESCE(i.MinimumStock, 0) AS MinimumStock,
                             CASE 
+                                WHEN i.InventoryID IS NULL THEN 'Not Stocked'
                                 WHEN i.QuantityAvailable <= 0 THEN 'Out of Stock'
                                 WHEN i.QuantityAvailable <= i.MinimumStock THEN 'Low Stock'
                                 ELSE 'In Stock'
                             END AS StockStatus
-                        FROM Inventory i
-                        INNER JOIN Products p ON i.ProductID = p.ProductID
-                        INNER JOIN Stores st ON i.StoreID = st.StoreID
+                        FROM Products p
                         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
+                        CROSS JOIN Stores st
+                        LEFT JOIN Inventory i ON i.ProductID = p.ProductID AND i.StoreID = st.StoreID
                         WHERE p.CategoryID = @CategoryID
-                        ORDER BY st.StoreName, p.ProductName";
+                        ORDER BY st.StoreName, c.CategoryName, p.ProductName";
                     parameter = new MySqlParameter("@CategoryID", categoryId);
                 }
                 break;
@@ -442,22 +498,22 @@ class Program
                             st.City,
                             p.ProductName,
                             p.SKU,
-                            p.UnitPrice,
                             c.CategoryName,
-                            i.QuantityOnHand,
-                            i.QuantityReserved,
-                            i.QuantityAvailable,
-                            i.MinimumStock,
+                            COALESCE(i.QuantityOnHand, 0) AS QuantityOnHand,
+                            COALESCE(i.QuantityReserved, 0) AS QuantityReserved,
+                            COALESCE(i.QuantityAvailable, 0) AS QuantityAvailable,
+                            COALESCE(i.MinimumStock, 0) AS MinimumStock,
                             i.LastRestocked,
                             CASE 
+                                WHEN i.InventoryID IS NULL THEN 'Not Stocked'
                                 WHEN i.QuantityAvailable <= 0 THEN 'Out of Stock'
                                 WHEN i.QuantityAvailable <= i.MinimumStock THEN 'Low Stock'
                                 ELSE 'In Stock'
                             END AS StockStatus
-                        FROM Inventory i
-                        INNER JOIN Products p ON i.ProductID = p.ProductID
-                        INNER JOIN Stores st ON i.StoreID = st.StoreID
+                        FROM Products p
                         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
+                        CROSS JOIN Stores st
+                        LEFT JOIN Inventory i ON i.ProductID = p.ProductID AND i.StoreID = st.StoreID
                         WHERE p.ProductID = @ProductID
                         ORDER BY st.StoreName";
                     parameter = new MySqlParameter("@ProductID", productId);
@@ -473,11 +529,12 @@ class Program
                         p.ProductName,
                         p.SKU,
                         c.CategoryName,
-                        i.QuantityOnHand,
-                        i.QuantityReserved,
-                        i.QuantityAvailable,
-                        i.MinimumStock,
+                        COALESCE(i.QuantityOnHand, 0) AS QuantityOnHand,
+                        COALESCE(i.QuantityReserved, 0) AS QuantityReserved,
+                        COALESCE(i.QuantityAvailable, 0) AS QuantityAvailable,
+                        COALESCE(i.MinimumStock, 0) AS MinimumStock,
                         CASE 
+                            WHEN i.InventoryID IS NULL THEN 'Not Stocked'
                             WHEN i.QuantityAvailable <= 0 THEN 'Out of Stock'
                             WHEN i.QuantityAvailable <= i.MinimumStock THEN 'Low Stock'
                             ELSE 'In Stock'
@@ -486,7 +543,7 @@ class Program
                     INNER JOIN Products p ON i.ProductID = p.ProductID
                     INNER JOIN Stores st ON i.StoreID = st.StoreID
                     INNER JOIN Categories c ON p.CategoryID = c.CategoryID
-                    ORDER BY st.StoreName, p.ProductName
+                    ORDER BY st.StoreName, c.CategoryName, p.ProductName
                     LIMIT 50";
                 break;
         }
@@ -499,34 +556,77 @@ class Program
             Console.ResetColor();
             Console.WriteLine();
 
+            // Print table header
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{"Store Name",-25} | {"City",-18} | {"Category",-18} | {"Product Name",-30} | {"SKU",-12} | {"On Hand",7} | {"Reserved",8} | {"Available",9} | {"Min Stock",9} | {"Status",-13}");
+            Console.WriteLine(new string('─', 195));
+            Console.ResetColor();
+
+            string currentStore = "";
+            string currentCategory = "";
+
             await ExecuteQuery(query, reader =>
             {
-                Console.WriteLine($"Store: {reader["StoreName"]} ({reader["City"]})");
-                Console.WriteLine($"Product: {reader["ProductName"]}");
-                Console.WriteLine($"SKU: {reader["SKU"]}");
-                Console.WriteLine($"Category: {reader["CategoryName"]}");
-                Console.WriteLine($"On Hand: {reader["QuantityOnHand"]}");
-                Console.WriteLine($"Reserved: {reader["QuantityReserved"]}");
-                Console.WriteLine($"Available: {reader["QuantityAvailable"]}");
-                Console.WriteLine($"Minimum Stock: {reader["MinimumStock"]}");
-                
+                string storeName = reader["StoreName"].ToString()!;
+                string city = reader["City"].ToString()!;
+                string productName = reader["ProductName"].ToString()!;
+                string category = reader["CategoryName"].ToString()!;
+                string sku = reader["SKU"].ToString()!;
+                string onHand = reader["QuantityOnHand"].ToString()!;
+                string reserved = reader["QuantityReserved"].ToString()!;
+                string available = reader["QuantityAvailable"].ToString()!;
+                string minStock = reader["MinimumStock"].ToString()!;
                 string stockStatus = reader["StockStatus"].ToString() ?? "";
-                Console.ForegroundColor = stockStatus switch
+
+                // Add separator when store changes
+                if (currentStore != storeName && currentStore != "")
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine(new string('─', 195));
+                    Console.ResetColor();
+                    currentCategory = ""; // Reset category for new store
+                }
+                // Add subtle separator when category changes within same store
+                else if (currentStore == storeName && currentCategory != category && currentCategory != "")
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine(new string('·', 195));
+                    Console.ResetColor();
+                }
+
+                currentStore = storeName;
+                currentCategory = category;
+
+                // Truncate long values to fit in columns
+                string displayStoreName = storeName;
+                string displayCity = city;
+                string displayProductName = productName;
+                string displayCategory = category;
+                string displaySku = sku;
+
+                if (displayStoreName.Length > 25) displayStoreName = displayStoreName.Substring(0, 22) + "...";
+                if (displayCity.Length > 18) displayCity = displayCity.Substring(0, 15) + "...";
+                if (displayProductName.Length > 30) displayProductName = displayProductName.Substring(0, 27) + "...";
+                if (displayCategory.Length > 18) displayCategory = displayCategory.Substring(0, 15) + "...";
+                if (displaySku.Length > 12) displaySku = displaySku.Substring(0, 9) + "...";
+
+                // Color code the status
+                var statusColor = stockStatus switch
                 {
                     "Out of Stock" => ConsoleColor.Red,
                     "Low Stock" => ConsoleColor.Yellow,
+                    "Not Stocked" => ConsoleColor.Gray,
                     _ => ConsoleColor.Green
                 };
-                Console.WriteLine($"Status: {stockStatus}");
+
+                Console.Write($"{displayStoreName,-25} | {displayCity,-18} | {displayCategory,-18} | {displayProductName,-30} | {displaySku,-12} | {onHand,7} | {reserved,8} | {available,9} | {minStock,9} | ");
+                Console.ForegroundColor = statusColor;
+                Console.Write($"{stockStatus,-13}");
                 Console.ResetColor();
-                
-                if (filterChoice == "4" && reader["LastRestocked"] != DBNull.Value)
-                {
-                    Console.WriteLine($"Last Restocked: {reader["LastRestocked"]:yyyy-MM-dd HH:mm}");
-                }
-                
-                Console.WriteLine(new string('─', 60));
+                Console.WriteLine();
             }, parameter != null ? new[] { parameter } : null);
+            
+            Console.WriteLine(new string('═', 195));
         }
     }
 
@@ -536,9 +636,9 @@ class Program
     static async Task ShowSalesReport()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
-        Console.WriteLine("                    SALES REPORT");
-        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+        Console.WriteLine("                                                                      SALES REPORT");
+        Console.WriteLine("═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
         Console.ResetColor();
         Console.WriteLine();
 
@@ -578,7 +678,7 @@ class Program
                         INNER JOIN Stores st ON s.StoreID = st.StoreID
                         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
                         WHERE s.ProductID = @ProductID
-                        ORDER BY s.SaleDate DESC";
+                        ORDER BY st.StoreName, c.CategoryName, p.ProductName";
                     parameters.Add(new MySqlParameter("@ProductID", productId));
                 }
                 break;
@@ -606,7 +706,7 @@ class Program
                         INNER JOIN Stores st ON s.StoreID = st.StoreID
                         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
                         WHERE s.StoreID = @StoreID
-                        ORDER BY s.SaleDate DESC";
+                        ORDER BY st.StoreName, c.CategoryName, p.ProductName";
                     parameters.Add(new MySqlParameter("@StoreID", storeId));
                 }
                 break;
@@ -637,7 +737,7 @@ class Program
                         INNER JOIN Stores st ON s.StoreID = st.StoreID
                         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
                         WHERE s.SaleDate BETWEEN @StartDate AND @EndDate
-                        ORDER BY s.SaleDate DESC";
+                        ORDER BY st.StoreName, c.CategoryName, p.ProductName";
                     parameters.Add(new MySqlParameter("@StartDate", startDate));
                     parameters.Add(new MySqlParameter("@EndDate", endDate + " 23:59:59"));
                 }
@@ -661,7 +761,7 @@ class Program
                     INNER JOIN Products p ON s.ProductID = p.ProductID
                     INNER JOIN Stores st ON s.StoreID = st.StoreID
                     INNER JOIN Categories c ON p.CategoryID = c.CategoryID
-                    ORDER BY s.SaleDate DESC
+                    ORDER BY st.StoreName, c.CategoryName, p.ProductName
                     LIMIT 30";
                 break;
         }
@@ -674,33 +774,74 @@ class Program
             Console.ResetColor();
             Console.WriteLine();
 
+            // Print table header
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{"Sale ID",-8} | {"Date",-19} | {"Store Name",-25} | {"Product Name",-30} | {"Category",-18} | {"SKU",-12} | {"Qty",5} | {"Price",10} | {"Total",10} | {"Transaction ID",-20}");
+            Console.WriteLine(new string('─', 195));
+            Console.ResetColor();
+
             decimal totalRevenue = 0;
             int totalQuantity = 0;
+            string currentStore = "";
+            string currentDate = "";
 
             await ExecuteQuery(query, reader =>
             {
-                Console.WriteLine($"Sale ID: {reader["SaleID"]}");
-                Console.WriteLine($"Date: {reader["SaleDate"]:yyyy-MM-dd HH:mm:ss}");
-                Console.WriteLine($"Store: {reader["StoreName"]}");
-                Console.WriteLine($"Product: {reader["ProductName"]} ({reader["SKU"]})");
-                Console.WriteLine($"Category: {reader["CategoryName"]}");
-                Console.WriteLine($"Quantity Sold: {reader["QuantitySold"]}");
-                Console.WriteLine($"Sale Price: ${reader["SalePrice"]:F2}");
-                Console.WriteLine($"Total Amount: ${reader["TotalAmount"]:F2}");
-                Console.WriteLine($"Transaction ID: {reader["TransactionID"]}");
-                Console.WriteLine(new string('─', 60));
+                string storeName = reader["StoreName"].ToString()!;
+                DateTime saleDate = Convert.ToDateTime(reader["SaleDate"]);
+                string saleDateOnly = saleDate.ToString("yyyy-MM-dd");
+                
+                // Add separator when store changes
+                if (currentStore != storeName && currentStore != "")
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine(new string('═', 195));
+                    Console.ResetColor();
+                    currentDate = ""; // Reset date for new store
+                }
+                // Add subtle separator when date changes within same store
+                else if (currentStore == storeName && currentDate != saleDateOnly && currentDate != "")
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine(new string('·', 195));
+                    Console.ResetColor();
+                }
 
-                totalRevenue += Convert.ToDecimal(reader["TotalAmount"]);
+                currentStore = storeName;
+                currentDate = saleDateOnly;
+
+                string saleId = reader["SaleID"].ToString()!;
+                string dateTime = saleDate.ToString("yyyy-MM-dd HH:mm:ss");
+                string productName = reader["ProductName"].ToString()!;
+                string category = reader["CategoryName"].ToString()!;
+                string sku = reader["SKU"].ToString()!;
+                string quantity = reader["QuantitySold"].ToString()!;
+                decimal salePrice = Convert.ToDecimal(reader["SalePrice"]);
+                decimal totalAmount = Convert.ToDecimal(reader["TotalAmount"]);
+                string transactionId = reader["TransactionID"].ToString()!;
+
+                // Truncate long values to fit in columns
+                if (storeName.Length > 25) storeName = storeName.Substring(0, 22) + "...";
+                if (productName.Length > 30) productName = productName.Substring(0, 27) + "...";
+                if (category.Length > 18) category = category.Substring(0, 15) + "...";
+                if (sku.Length > 12) sku = sku.Substring(0, 9) + "...";
+                if (transactionId.Length > 20) transactionId = transactionId.Substring(0, 17) + "...";
+
+                Console.WriteLine($"{saleId,-8} | {dateTime,-19} | {storeName,-25} | {productName,-30} | {category,-18} | {sku,-12} | {quantity,5} | ${salePrice,9:F2} | ${totalAmount,9:F2} | {transactionId,-20}");
+
+                totalRevenue += totalAmount;
                 totalQuantity += Convert.ToInt32(reader["QuantitySold"]);
             }, parameters.Count > 0 ? parameters.ToArray() : null);
+
+            Console.WriteLine(new string('═', 195));
 
             if (totalRevenue > 0)
             {
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("SUMMARY:");
-                Console.WriteLine($"Total Units Sold: {totalQuantity}");
-                Console.WriteLine($"Total Revenue: ${totalRevenue:F2}");
+                Console.WriteLine($"Total Units Sold: {totalQuantity:N0}");
+                Console.WriteLine($"Total Revenue: ${totalRevenue:N2}");
                 Console.ResetColor();
             }
         }

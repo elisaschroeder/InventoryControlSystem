@@ -16,3 +16,4 @@ C:\Users\elisa\OneDrive\Elisas Docs\Education and Training\Full-Stack Developmen
 C:\Users\elisa\OneDrive\Elisas Docs\Education and Training\Full-Stack Development\Databases\InventoryControlSystem\obj\Debug\net9.0\InventoryControlSystem.pdb
 C:\Users\elisa\OneDrive\Elisas Docs\Education and Training\Full-Stack Development\Databases\InventoryControlSystem\obj\Debug\net9.0\InventoryControlSystem.genruntimeconfig.cache
 C:\Users\elisa\OneDrive\Elisas Docs\Education and Training\Full-Stack Development\Databases\InventoryControlSystem\obj\Debug\net9.0\ref\InventoryControlSystem.dll
+C:\Users\elisa\OneDrive\Elisas Docs\Education and Training\Full-Stack Development\Databases\InventoryControlSystem\obj\Debug\net9.0\InventoryControlSystem.sourcelink.json
