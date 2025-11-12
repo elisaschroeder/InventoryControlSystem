@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-11-12
+
 ### Added
 - Comprehensive README.md with project overview, goals, and planned features
 - PROJECT_STATUS.md to track detailed project progress and milestones
@@ -14,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Enhanced README from basic description to comprehensive project documentation
+
+### Documentation
+- Added "What's Been Produced So Far" section to README
+- Created detailed roadmap and milestone tracking in PROJECT_STATUS
+- Established changelog format following Keep a Changelog standards
 
 ## [0.1.0] - 2025-11-12
 
